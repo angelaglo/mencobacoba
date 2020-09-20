@@ -38,6 +38,10 @@ public class UpdateFragment extends Fragment {
         deleteBtn = view.findViewById(R.id.btn_delete);
         cancelBtn = view.findViewById(R.id.btn_cancel);
 
+        editText.setText(user.getFullName());
+        editText1.setText(user.getNumber());
+        editText2.setText(user.getAge());
+
         return view;
     }
 
@@ -119,4 +123,6 @@ public class UpdateFragment extends Fragment {
         DeleteUser delete = new DeleteUser();
         delete.execute();
     }
+
+
 }

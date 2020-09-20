@@ -48,7 +48,7 @@ public class User implements Serializable {
         return age;
     }
 
-    public void setAge(String number) {
+    public void setAge(String age) {
         this.age = age;
     }
 

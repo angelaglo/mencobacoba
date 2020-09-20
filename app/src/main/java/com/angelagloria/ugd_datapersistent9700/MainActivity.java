@@ -5,9 +5,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +20,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private SearchView searchView;
+    private UserRecyclerViewAdapter adapter;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout refreshLayout;
 
@@ -25,9 +29,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        searchView = findViewById(R.id.searchView);
         refreshLayout = findViewById(R.id.swipe_refresh);
         recyclerView = findViewById(R.id.user_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return true;
+            }
+        });
 
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -55,8 +73,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(List<User> users) {
                 super.onPostExecute(users);
-                UserRecyclerViewAdapter adapter = new UserRecyclerViewAdapter(MainActivity.this, users);
+                adapter = new UserRecyclerViewAdapter(MainActivity.this, users);
                 recyclerView.setAdapter(adapter);
+
                 if (users.isEmpty()){
                     Toast.makeText(getApplicationContext(), "Empty List", Toast.LENGTH_SHORT).show();
                 }

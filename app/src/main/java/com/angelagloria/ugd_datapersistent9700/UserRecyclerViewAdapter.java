@@ -5,18 +5,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerViewAdapter.UserViewHolder> {
 
     private Context context;
     private List<User> userList;
+    private List<User> userListFiltered;
 
     public UserRecyclerViewAdapter(Context context, List<User> userList) {
         this.context = context;
@@ -36,7 +39,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         User user = userList.get(position);
         holder.textView1.setText(user.getNumber());
         holder.textView.setText(user.getFullName());
-        holder.textView2.setText(user.getAge());
+        holder.textView2.setText(user.getAge() + " years old");
     }
 
     @Override
@@ -69,6 +72,43 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
                     .replace(R.id.frame_layout, updateFragment)
                     .commit();
         }
+    }
+
+    public void setUser(List<User> user){
+        userList = user;
+        userListFiltered = user;
+        notifyDataSetChanged();
+    }
+
+    public Filter getFilter(){
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                FilterResults filterResults = new FilterResults();
+                if(charSequence == null || charSequence.length() == 0){
+                    filterResults.count = userListFiltered.size();
+                    filterResults.values = userListFiltered;
+                }else{
+                    String searchChr = charSequence.toString().toUpperCase();
+
+                    List<User> resultData = new ArrayList<>();
+
+                    for (User user : userListFiltered){
+                        if(user.getFullName().toUpperCase().contains(searchChr)){
+                            resultData.add(user);
+                        }
+                    }
+                    filterResults.count = resultData.size();
+                    filterResults.values = resultData;
+                }
+                return filterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                userList.addAll((List<User>) filterResults.values);
+            }
+        };
     }
 }
 
