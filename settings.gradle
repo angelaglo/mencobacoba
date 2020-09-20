@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "UGD_DataPersistent9700"
